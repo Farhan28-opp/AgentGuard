@@ -1,0 +1,137 @@
+{% extends "_base.html" %}
+{% set active_page = "home" %}
+{% block title %}AgentGuard — Give your agent authority. Keep control of the money.{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="wrap hero-grid">
+        <div>
+            <div class="eyebrow">AgentGuard × Drunix</div>
+            <h1 class="display">Give your agent authority.<br><em>Keep control of the money.</em></h1>
+            <p class="lede">AgentGuard lets autonomous agents act within financial authority that is bounded,
+                verified and revocable. Every payment is checked for identity, policy and behaviour, and the
+                authority behind it can be enforced independently on the Drunix ledger.</p>
+            <div class="row-gap">
+                <a href="/agent" class="btn btn-primary btn-lg">Ask your agent {{ icon("arrow", "icon arrow") }}</a>
+                <a href="/security" class="btn btn-secondary btn-lg">View security {{ icon("arrow", "icon arrow") }}</a>
+            </div>
+            <p class="meta hero-note">Prototype: simulated marketplace and payment rail. No real money moves.</p>
+        </div>
+        <aside class="hero-aside" aria-label="How it works">
+            <div class="eyebrow">How it works</div>
+            <ol>
+                <li><span>01</span><div><b>You set a policy</b> — overall authority, a per-purchase limit, allowed merchants.</div></li>
+                <li><span>02</span><div><b>Your Main Agent delegates</b> only the authority each task needs.</div></li>
+                <li><span>03</span><div><b>AgentGuard checks</b> every signed request: identity, policy and behavioural risk.</div></li>
+                <li><span>04</span><div><b>Drunix enforces</b> the reserve and the commit on its ledger when enforcement is on.</div></li>
+                <li><span>05</span><div><b>You authorize, or revoke</b>, at any time. The agent never holds your money.</div></li>
+            </ol>
+        </aside>
+    </div>
+</section>
+
+<section class="section">
+    <div class="wrap">
+        <div class="section-head">
+            <h2 class="h2">What can your agent take care of?</h2>
+            <span class="meta">Services available in this prototype</span>
+        </div>
+        <nav class="list" aria-label="Services">
+            <a class="service" id="action-groceries" href="/agent?instruction={{ 'Buy groceries for me under ₹3,000' | urlencode }}">
+                <span class="service-num">01</span><span class="service-name">Groceries</span>
+                <span class="service-desc">Agents search the simulated marketplace, compare listed prices and hold the amount for your approval.</span>
+                <span class="tag">Agent</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-household" href="/agent?instruction={{ 'Buy household items under ₹2,000' | urlencode }}">
+                <span class="service-num">02</span><span class="service-name">Household</span>
+                <span class="service-desc">Cleaning and home essentials, within your per-purchase limit.</span>
+                <span class="tag">Agent</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-personal" href="/agent?instruction={{ 'Buy personal care items under ₹1,500' | urlencode }}">
+                <span class="service-num">03</span><span class="service-name">Personal care</span>
+                <span class="service-desc">Toiletries and hygiene, only from merchants your policy allows.</span>
+                <span class="tag">Agent</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-shopping" href="/agent">
+                <span class="service-num">04</span><span class="service-name">Shopping</span>
+                <span class="service-desc">Pick products and quantities yourself; let the agent compare platforms.</span>
+                <span class="tag">Agent</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-bills" href="/payments?tab=bills">
+                <span class="service-num">05</span><span class="service-name">Bills</span>
+                <span class="service-desc">Electricity, gas and water. You review and authorize each payment; your wallet key signs it.</span>
+                <span class="tag">Direct</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-send" href="/payments?tab=send">
+                <span class="service-num">06</span><span class="service-name">Send Money</span>
+                <span class="service-desc">UPI-style transfer (simulated). Reviewed and authorized by you.</span>
+                <span class="tag">Direct</span>{{ icon("arrow", "icon arrow") }}</a>
+            <a class="service" id="action-recharge" href="/payments?tab=recharge">
+                <span class="service-num">07</span><span class="service-name">Recharge</span>
+                <span class="service-desc">Mobile prepaid demo plans. Reviewed and authorized by you.</span>
+                <span class="tag">Direct</span>{{ icon("arrow", "icon arrow") }}</a>
+        </nav>
+    </div>
+</section>
+
+<section class="section">
+    <div class="wrap">
+        <div class="section-head">
+            <h2 class="h2">One control layer. Two independent checks.</h2>
+            <span class="meta">AgentGuard × Drunix</span>
+        </div>
+        <div class="integration">
+            <div>
+                <div class="eyebrow">AgentGuard decides</div>
+                <h3 class="h3">Is this request acceptable?</h3>
+                <ul>
+                    <li>The agent's Ed25519 signature, nonce, timestamp and payload hash</li>
+                    <li>Your policy: limits, allowed merchants and categories, approval mode</li>
+                    <li>Behaviour, scored by an IsolationForest: allow, review or contain</li>
+                </ul>
+            </div>
+            <div>
+                <div class="eyebrow">Drunix enforces</div>
+                <h3 class="h3">Does the authority actually exist?</h3>
+                <ul>
+                    <li>The agentauth chaincode re-checks limits, hierarchy, expiry and revocation</li>
+                    <li>Reserve, then commit — idempotent, never committed twice</li>
+                    <li>With enforcement on, a payment is recorded only after a VALID commit</li>
+                </ul>
+            </div>
+            <div class="integration-foot">
+                <span class="meta">Drunix is NPCI's private blockchain framework. AgentGuard reaches it through a Fabric Gateway bridge.</span>
+                <a href="/drunix" class="link">Open the Drunix Ledger {{ icon("arrow", "icon icon-sm arrow") }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="wrap">
+        <div class="section-head">
+            <h2 class="h2">Four controls stand between an agent and your money.</h2>
+        </div>
+        <div class="principles">
+            <div class="principle">
+                <div class="n">01 — Identity</div>
+                <h3 class="h3">Every agent signs what it asks for.</h3>
+                <p>Each agent has its own Ed25519 key. Requests are verified for signature, timestamp,
+                    one-time nonce and payload integrity before any authority moves.</p>
+            </div>
+            <div class="principle">
+                <div class="n">02 — Authority</div>
+                <h3 class="h3">Budgets are delegated, never minted.</h3>
+                <p>Authority moves down the agent hierarchy and is reserved, committed, released or revoked.
+                    The ledger always adds up, and no model can override it.</p>
+            </div>
+            <div class="principle">
+                <div class="n">03 — Behaviour</div>
+                <h3 class="h3">Unusual behaviour is contained.</h3>
+                <p>An IsolationForest scores requests that are already within limits. High risk revokes
+                    the agent's authority and releases its holds.</p>
+            </div>
+            <div class="principle">
+                <div class="n">04 — Ledger</div>
+                <h3 class="h3">Authority is enforced on Drunix.</h3>
+                <p>With enforcement on, every reserve and commit must be committed VALID by the
+                    agentauth chaincode, which refuses invalid operations on its own.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

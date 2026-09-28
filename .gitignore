@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+
+# Environments & secrets
+.venv/
+venv/
+.env
+*.pem
+*.key
+
+# Local agent private keys (Ed25519 dev keystore) — NEVER commit or package
+dev_keys/
+
+# OS / archive junk
+.DS_Store
+__MACOSX/
+
+# Drunix integration: runtime network state, generated crypto, build output
+drunix/.runtime/
+drunix/bridge/drunix-bridge
+drunix/chaincode-agentauth/vendor/
+drunix/chaincode-agentauth/*.tar.gz
+*.tar.gz
+priv_sk
+*_sk
+drunix/drunix.env
+
+# Local .env backups (contain credentials)
+.env.bak*
+
+# Generic local/runtime state (publishing checklist)
+.runtime/
+.git/
+*.sqlite
+*.db
+*.dump
