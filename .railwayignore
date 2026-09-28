@@ -1,0 +1,16 @@
+.venv/
+venv/
+dev_keys/
+.env
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+__MACOSX/
+*.pem
+*.key
+docs/
+tests/
+drunix/.runtime/
+drunix/drunix.env

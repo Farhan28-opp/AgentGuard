@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% set active_page = "activity" %}
+{% block title %}AgentGuard — Order receipt{% endblock %}
+{% block description %}Order confirmation and the financial-authority trail behind it.{% endblock %}
+{% block content %}
+<div class="wrap">
+    <div class="receipt page" id="receipt" data-ref="{{ order_ref | e }}">
+        <span class="loading"><span class="spinner"></span>Loading order</span>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/receipt.js"></script>{% endblock %}

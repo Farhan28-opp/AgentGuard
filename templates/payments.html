@@ -1,0 +1,118 @@
+{% extends "_base.html" %}
+{% set active_page = "payments" %}
+{% block title %}AgentGuard — Payments{% endblock %}
+{% block description %}Recharge, bills and send money: you review and authorize every direct payment. Shopping is handled by AgentGuard's controlled payment agents.{% endblock %}
+{% block content %}
+<div class="wrap">
+    <header class="page-head">
+        <div class="eyebrow">Payments</div>
+        <h1 class="h1">Pay directly, or let an agent pay within limits.</h1>
+        <p class="lede">Every payment is checked against your policy, identity and behaviour, and you authorize it before anything is issued or paid.
+            <span class="tag">Simulated payment rail</span> <span class="tag">Demo billers and plans</span></p>
+    </header>
+
+    <div class="tabs" role="tablist">
+        <button class="tab active" id="tab-recharge" role="tab" data-tab="recharge">Recharge</button>
+        <button class="tab" id="tab-bills" role="tab" data-tab="bills">Bills</button>
+        <button class="tab" id="tab-send" role="tab" data-tab="send">Send Money</button>
+        <button class="tab" id="tab-shopping" role="tab" data-tab="shopping">Shopping</button>
+    </div>
+
+    <div class="cols page-body">
+        <div class="col-7">
+            <section id="review-panel" hidden aria-live="polite"></section>
+            <div id="forms">
+            <section class="tab-panel active" id="content-recharge">
+                <form id="form-recharge" class="stack-lg">
+                    <div class="cols">
+                        <div class="field col-6"><label class="label" for="rc-mobile">Mobile number</label>
+                            <input type="tel" id="rc-mobile" class="input" placeholder="Enter mobile number" inputmode="numeric" pattern="\d{10}" title="10-digit mobile number" required></div>
+                        <div class="field col-6"><label class="label" for="rc-operator">Operator</label>
+                            <select id="rc-operator" class="select"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option></select></div>
+                    </div>
+                    <fieldset class="field">
+                        <legend class="label">Plan <span class="tag">Demo plans</span></legend>
+                        <div class="list plans">
+                            <label class="list-row plan-option"><span class="check"><input type="radio" name="plan" value="149|1GB/Day 14 Days" checked> <span><b class="num">₹149</b> <span class="muted">· 1 GB/day · 14 days</span></span></span></label>
+                            <label class="list-row plan-option"><span class="check"><input type="radio" name="plan" value="299|2GB/Day 28 Days"> <span><b class="num">₹299</b> <span class="muted">· 2 GB/day · 28 days</span></span></span></label>
+                            <label class="list-row plan-option"><span class="check"><input type="radio" name="plan" value="599|3GB/Day 84 Days"> <span><b class="num">₹599</b> <span class="muted">· 3 GB/day · 84 days</span></span></span></label>
+                        </div>
+                    </fieldset>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-recharge-submit">Review recharge</button>
+                </form>
+            </section>
+
+            <section class="tab-panel" id="content-bills">
+                <form id="form-bill" class="stack-lg">
+                    <div class="field"><label class="label" for="bill-provider">Provider <span class="tag">Demo billers</span></label>
+                        <select id="bill-provider" class="select">
+                            <option value="TANGEDCO">TANGEDCO — Electricity</option>
+                            <option value="BESCOM">BESCOM — Electricity</option>
+                            <option value="MahaGas">MahaGas — Gas</option>
+                            <option value="BangaloreWater">Bangalore Water Board</option>
+                        </select></div>
+                    <div class="cols">
+                        <div class="field col-6"><label class="label" for="bill-consumer">Consumer number</label>
+                            <input type="text" id="bill-consumer" class="input" placeholder="Enter consumer number" required></div>
+                        <div class="field col-6"><label class="label" for="bill-amount">Amount (₹)</label>
+                            <input type="number" id="bill-amount" class="input num" placeholder="Enter amount" min="1" max="50000" step="0.01" required></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-bill-submit">Review bill payment</button>
+                </form>
+            </section>
+
+            <section class="tab-panel" id="content-send">
+                <form id="form-send" class="stack-lg">
+                    <div class="field"><label class="label" for="send-upi">Recipient UPI ID</label>
+                        <input type="text" id="send-upi" class="input" placeholder="name@bank"
+                               pattern="[A-Za-z0-9._\-]{2,64}@[A-Za-z]{2,32}" title="UPI ID like name@bank" required></div>
+                    <div class="cols">
+                        <div class="field col-6"><label class="label" for="send-amount">Amount (₹)</label>
+                            <input type="number" id="send-amount" class="input num" placeholder="Enter amount" min="1" max="50000" step="0.01" required></div>
+                        <div class="field col-6"><label class="label" for="send-purpose">Purpose</label>
+                            <input type="text" id="send-purpose" class="input" placeholder="e.g. Dinner split"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-send-submit">Review transfer</button>
+                </form>
+            </section>
+
+            <section class="tab-panel" id="content-shopping">
+                <div class="stack-lg">
+                    <p class="lede">Shopping is AgentGuard's agentic flow. You pick products from a controlled simulated
+                        marketplace, choose the platform or let the Merchant Optimization Agent compare listed prices, and the Main Agent delegates
+                        bounded authority to the Purchase Agent. You approve before anything is paid.</p>
+                    <div class="field"><label class="label" for="shop-instruction">What should the agents buy?</label>
+                        <div class="inline-form">
+                            <input type="text" id="shop-instruction" class="input" maxlength="200" value="Buy groceries for me under ₹3,000">
+                            <a href="/agent" class="btn btn-primary" id="btn-shopping-go">Continue {{ icon("arrow", "icon arrow") }}</a>
+                        </div></div>
+                </div>
+            </section>
+            </div>
+        </div>
+        <aside class="col-5">
+            <div class="pay-aside">
+                <div id="payment-result" hidden></div>
+                <div class="panel panel-tight">
+                    <div class="eyebrow">How this payment is protected</div>
+                    <p class="h4 mt-3">Direct payment <span class="meta">· Recharge, Bills, Send Money · authorized by you</span></p>
+                    <ol class="pay-flow">
+                        <li><span>AgentGuard checks your <b>per-payment limit</b>, your <b>wallet key</b> and a <b>behavioural risk</b> pre-check. Nothing is issued yet.</span></li>
+                        <li><span><b>You review and authorize</b> the exact amount.</span></li>
+                        <li><span>A <b>single-use mandate</b> for exactly that amount is issued; your wallet key <b>signs</b> the reserve and AgentGuard re-runs the authority and risk checks.</span></li>
+                        <li><span>With ledger enforcement on, <b>Drunix</b> must commit the Reserve and the Commit VALID; it settles on the <b>simulated rail</b> with a receipt.</span></li>
+                    </ol>
+                    <p class="h4 mt-5">Agentic payment <span class="meta">· Shopping</span></p>
+                    <ol class="pay-flow">
+                        <li><span>Your <b>Main Agent</b> delegates bounded authority to a Purchase Agent.</span></li>
+                        <li><span>The agent <b>signs</b>; AgentGuard checks identity, policy and risk, then <b>holds</b> the amount.</span></li>
+                        <li><span>With ledger enforcement on, <b>Drunix</b> must commit the reserve and the commit VALID.</span></li>
+                        <li><span><b>You approve</b> before anything is paid, unless your policy says otherwise.</span></li>
+                    </ol>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/payments.js"></script>{% endblock %}

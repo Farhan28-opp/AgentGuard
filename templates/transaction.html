@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% set active_page = "activity" %}
+{% block title %}AgentGuard — Receipt{% endblock %}
+{% block description %}Payment receipt and the authority trail behind it.{% endblock %}
+{% block content %}
+<div class="wrap">
+    <div class="receipt page" id="txr" data-id="{{ task_id | e }}">
+        <span class="loading"><span class="spinner"></span>Loading receipt</span>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/transaction.js"></script>{% endblock %}

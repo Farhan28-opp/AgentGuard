@@ -1,0 +1,81 @@
+{% extends "_base.html" %}
+{% set active_page = "agent" %}
+{% block title %}AgentGuard — AI Agent{% endblock %}
+{% block description %}Shop with specialized payment agents that act within bounded financial authority. You approve before anything is paid.{% endblock %}
+{% block content %}
+<div class="wrap">
+    <section class="ws-head">
+        <div class="ws-ask">
+            <div class="eyebrow">AI Agent</div>
+            <h1 class="h1">What should I take care of?</h1>
+            <form id="task-form" class="inline-form" autocomplete="off">
+                <label class="sr-only" for="instruction">Instruction</label>
+                <input type="text" id="instruction" class="input input-lg" maxlength="200" value="Buy groceries for me under ₹3,000" required>
+                <button class="btn btn-primary btn-lg" id="btn-start" type="submit">Continue {{ icon("arrow", "icon arrow") }}</button>
+            </form>
+            <div class="suggestions">
+                <span class="muted">Try</span>
+                <button class="link" type="button" data-instruction="Buy groceries for me under ₹3,000">Groceries under ₹3,000</button>
+                <button class="link" type="button" data-instruction="Buy household items under ₹2,000">Household under ₹2,000</button>
+                <button class="link" type="button" data-instruction="Buy personal care items under ₹1,500">Personal care under ₹1,500</button>
+            </div>
+            <p class="meta mt-4">Instructions are read by deterministic rules, not a language model. The marketplace and payment rail are simulated.</p>
+            <div id="phase-error" class="notice bad mt-5" hidden><span id="error-detail"></span></div>
+        </div>
+        <aside class="authority-box" aria-label="Current authority and policy">
+            <div class="eyebrow">Current authority</div>
+            <div class="big" id="auth-per-txn">—</div>
+            <p class="meta mt-1" id="auth-meta">Loading policy…</p>
+            <div class="panel-flat mt-5">
+                <div class="split"><span class="eyebrow">Agent policy</span>
+                    <button class="link" type="button" id="btn-policy-toggle" aria-expanded="false">Edit policy</button></div>
+                <p class="body-sm mt-2" id="policy-summary">—</p>
+                <div id="policy-notice"></div>
+                <div id="policy-body" class="policy-edit" hidden></div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="ws-body page-section">
+        <div class="ws-main">
+            <div id="phase-empty" class="empty">
+                <div class="eyebrow">No active task</div>
+                <p class="h3 mt-2">Give the agent an instruction to start.</p>
+                <p class="muted mt-2">You'll pick products, choose a platform (or let the agent compare), review the payment request and authorize it. Nothing is paid before that.</p>
+            </div>
+            <div id="phase-task" hidden>
+                <div class="ws-task-head">
+                    <div>
+                        <div class="eyebrow" id="task-label">Task</div>
+                        <h2 class="h2" id="task-title"></h2>
+                        <p class="meta mt-2" id="task-sub"></p>
+                    </div>
+                    <span class="badge" id="task-status"></span>
+                </div>
+                <div id="task-main"></div>
+            </div>
+        </div>
+        <aside class="ws-side stack-lg">
+            <div>
+                <div class="eyebrow mb-3">Agent plan</div>
+                <ol class="plan" id="plan"></ol>
+            </div>
+            <div>
+                <div class="split mb-3"><span class="eyebrow">Authority</span><span class="meta">live from the ledger</span></div>
+                <div id="hierarchy"><p class="meta">Loads with a task.</p></div>
+            </div>
+            <div>
+                <div class="eyebrow mb-3">Agent log</div>
+                <ul class="log" id="steps-list"></ul>
+            </div>
+            <div class="row-gap">
+                <button class="btn btn-secondary btn-sm" type="button" id="btn-new">New task</button>
+                <a href="/activity" class="link">Activity {{ icon("arrow", "icon icon-sm arrow") }}</a>
+                <a href="/security" class="link">Security {{ icon("arrow", "icon icon-sm arrow") }}</a>
+                <a href="/drunix" class="link">Drunix Ledger {{ icon("arrow", "icon icon-sm arrow") }}</a>
+            </div>
+        </aside>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/agent.js"></script>{% endblock %}

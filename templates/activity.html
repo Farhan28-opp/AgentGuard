@@ -1,0 +1,67 @@
+{% extends "_base.html" %}
+{% set active_page = "activity" %}
+{% block title %}AgentGuard — Activity{% endblock %}
+{% block description %}Your orders, payments and agent actions, as recorded by AgentGuard.{% endblock %}
+{% block content %}
+<div class="wrap">
+    <header class="page-head split">
+        <div>
+            <div class="eyebrow">Activity</div>
+            <h1 class="h1">History</h1>
+            <p class="lede">Your payments and agent purchases, and every event AgentGuard recorded for them. Refreshed every 5 seconds.</p>
+        </div>
+    </header>
+
+    <section class="stack page-section" aria-labelledby="h-transactions">
+        <div class="section-head stack-sm">
+            <h2 class="h2" id="h-transactions">Transactions</h2>
+            <div class="filters">
+                <div class="chips" id="tx-filters">
+                    <button class="chip active" data-kind="" type="button">All</button>
+                    <button class="chip" data-kind="direct" type="button">Direct payments</button>
+                    <button class="chip" data-kind="agent" type="button">Agent purchases</button>
+                </div>
+                <label class="check"><input type="checkbox" id="show-hidden"> Show hidden</label>
+            </div>
+        </div>
+        <div class="cols">
+            <div class="col-7">
+                <div class="panel panel-tight table-wrap">
+                    <table class="table tx-table">
+                        <thead><tr><th>Date</th><th>Type</th><th>Merchant</th><th class="r">Amount</th><th class="r">Status</th></tr></thead>
+                        <tbody id="tx-list"><tr><td colspan="5"><span class="loading"><span class="spinner"></span>Loading</span></td></tr></tbody>
+                    </table>
+                </div>
+                <p class="meta mt-3">Select a transaction for its receipt and actions. <b>Hide</b> removes it from this list only — the payment,
+                    order, Drunix journal and audit records are never deleted.</p>
+            </div>
+            <aside class="col-5">
+                <div class="pay-aside"><div class="panel" id="tx-detail">
+                    <div class="eyebrow">Transaction</div>
+                    <p class="muted mt-2">Select a transaction to see its receipt: amount, payment reference, signature, risk, policy, capability and Drunix transactions.</p>
+                </div></div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="stack page-section">
+        <div class="section-head stack-sm">
+            <h2 class="h2">Event log</h2>
+            <div class="filters">
+                <div class="chips" id="filters">
+                    <button class="chip active" data-filter="all" type="button">All</button>
+                    <button class="chip" data-filter="payment" type="button">Payments</button>
+                    <button class="chip" data-filter="agent" type="button">Agent actions</button>
+                    <button class="chip" data-filter="security" type="button">Security</button>
+                </div>
+                <label class="check"><input type="checkbox" id="show-tech"> Technical detail</label>
+                <span class="meta" id="last-updated">—</span>
+                <button class="btn btn-secondary btn-sm" type="button" id="btn-refresh">Refresh</button>
+            </div>
+        </div>
+        <div class="tx-row tx-head"><span>Date</span><span>Transaction</span><span class="who">Merchant / agent</span><span class="amt">Amount</span><span class="st">Status</span></div>
+        <div id="activity-container"><div class="empty"><span class="loading"><span class="spinner"></span>Loading activity</span></div></div>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/activity.js"></script>{% endblock %}

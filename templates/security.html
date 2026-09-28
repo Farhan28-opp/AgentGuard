@@ -1,0 +1,192 @@
+{% extends "_base.html" %}
+{% set active_page = "security" %}
+{% block title %}AgentGuard — Security Center{% endblock %}
+{% block description %}Security Center: agents, capability hierarchy, authority distribution, reservations, risk, containment, audit events and cryptographic verification.{% endblock %}
+{% block content %}
+<div class="wrap work-page">
+    <header class="work-head">
+        <div>
+            <div class="eyebrow">Security Center · control view</div>
+            <h1 class="h1">Authority, identity and risk — as the ledger records them.</h1>
+            <p class="lede">The infrastructure behind every agent payment, for operators and judges. Read from PostgreSQL and polled
+                every 2 s (near-real-time, not streaming). Nothing on this page is synthesised in the browser.</p>
+        </div>
+        <div class="work-status">
+            <span class="live-chip"><span class="dot-live" id="sc-live"></span><span class="mono" id="sc-updated">—</span></span>
+            <a class="live-chip" href="/drunix" id="sc-drunix" title="Drunix ledger enforcement">Drunix ledger · <span class="mono">…</span></a>
+        </div>
+    </header>
+
+    <nav class="subnav" aria-label="Security Center sections">
+        <a href="#overview"><span>01</span>Overview</a>
+        <a href="#hierarchy"><span>02</span>Hierarchy</a>
+        <a href="#distribution"><span>03</span>Distribution</a>
+        <a href="#reservations"><span>04</span>Reservations</a>
+        <a href="#agents"><span>05</span>Agents &amp; mandate</a>
+        <a href="#risk"><span>06</span>Risk &amp; containment</a>
+        <a href="#crypto"><span>07</span>Cryptography</a>
+        <a href="#audit"><span>08</span>Audit &amp; payments</a>
+    </nav>
+
+    <section class="w-section" id="overview" aria-labelledby="h-overview">
+        <div class="w-head">
+            <span class="w-num">01</span>
+            <h2 class="h2" id="h-overview">Security overview</h2>
+            <p class="w-desc">Live totals across every agent, capability and hold AgentGuard manages, including the Security Lab's own agents.</p>
+        </div>
+        <div class="c-stats">
+            <div class="c-stat"><div class="k">Active agents</div><div class="v" id="stat-agents">–</div></div>
+            <div class="c-stat"><div class="k">Active capabilities</div><div class="v" id="stat-capabilities">–</div></div>
+            <div class="c-stat"><div class="k">Active reservations</div><div class="v" id="stat-reservations">–</div></div>
+            <div class="c-stat"><div class="k">Reserved authority</div><div class="v warn" id="stat-reserved">–</div></div>
+            <div class="c-stat"><div class="k">Committed authority</div><div class="v" id="stat-committed">–</div></div>
+            <div class="c-stat"><div class="k">Containments</div><div class="v bad" id="stat-contained">–</div></div>
+            <div class="c-stat"><div class="k">Revoked capabilities</div><div class="v" id="stat-revoked">–</div></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="hierarchy" aria-labelledby="h-hierarchy">
+        <div class="w-head">
+            <span class="w-num">02</span>
+            <h2 class="h2" id="h-hierarchy">Authority and capability hierarchy</h2>
+            <div class="w-aside"><span class="badge ok plain">Active</span><span class="badge warn plain">Holding</span><span class="badge plain">Exhausted</span><span class="badge bad plain">Revoked</span></div>
+            <p class="w-desc">Every capability is a signed, bounded grant carved from its parent. Delegation trees are listed first. Select a node
+                to see its provenance back to the mandate and its grant attestation.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card">
+                <div class="tree-container" id="capability-tree"><span class="loading"><span class="spinner"></span>Loading</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-section" id="distribution" aria-labelledby="h-distribution">
+        <div class="w-head">
+            <span class="w-num">03</span>
+            <h2 class="h2" id="h-distribution">Authority distribution</h2>
+            <p class="w-desc">Delegation transfers authority; it never mints it. The Main Agent's standing pool is split between what it still
+                holds and what it has delegated, and holds and payments move authority from unallocated to reserved to committed.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card" id="dist-panel"><span class="loading"><span class="spinner"></span>Loading</span></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="reservations" aria-labelledby="h-reservations">
+        <div class="w-head">
+            <span class="w-num">04</span>
+            <h2 class="h2" id="h-reservations">Active reservations and payment state</h2>
+            <p class="w-desc">A reservation holds authority for a limited window. It is either committed by a signed payment, released, or expires.</p>
+        </div>
+        <div class="w-body w-grid">
+            <div>
+                <div class="w-sub"><span>Reservations</span><span class="meta">latest 25</span></div>
+                <div class="w-card table-wrap"><table class="table">
+                    <thead><tr><th>ID</th><th>Merchant</th><th class="r">Amount</th><th>Status</th><th class="r">Expires</th></tr></thead>
+                    <tbody id="reservations-table"></tbody></table></div>
+            </div>
+            <div>
+                <div class="w-sub"><span>Recent orders</span><span class="meta">agent purchases</span></div>
+                <div class="w-card table-wrap"><table class="table">
+                    <thead><tr><th>Order</th><th>Merchant</th><th class="r">Total</th><th>Approval</th><th class="r">Time</th></tr></thead>
+                    <tbody id="orders-table"></tbody></table></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-section" id="agents" aria-labelledby="h-agents">
+        <div class="w-head">
+            <span class="w-num">05</span>
+            <h2 class="h2" id="h-agents">Agents and mandate</h2>
+            <div class="w-aside"><a class="link" href="/agent">Edit policy on AI Agent</a></div>
+            <p class="w-desc">The user's standing mandate, the agent policy that bounds it, and every agent identity AgentGuard has registered.</p>
+        </div>
+        <div class="w-body w-grid">
+            <div>
+                <div class="w-sub"><span>Agent policy and agents</span><span class="meta">read-only</span></div>
+                <div class="w-card"><div id="policy-panel" class="kv"></div></div>
+            </div>
+            <div>
+                <div class="w-sub"><span>Agents and identity</span><span class="meta">most recent</span></div>
+                <div class="w-card table-wrap"><table class="table">
+                    <thead><tr><th>Identifier</th><th>Type</th><th>Status</th><th>Key fingerprint</th></tr></thead>
+                    <tbody id="agents-table"></tbody></table></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-section" id="risk" aria-labelledby="h-risk">
+        <div class="w-head">
+            <span class="w-num">06</span>
+            <h2 class="h2" id="h-risk">Risk analysis and containment</h2>
+            <p class="w-desc">Hard authority rules run first and are never overridden by the model. An IsolationForest then scores requests that are
+                already within limits; HIGH risk revokes the agent's capability subtree, releases its holds and suspends its key.</p>
+        </div>
+        <div class="w-body w-grid">
+            <div>
+                <div class="w-sub"><span>Behavioural risk engine</span><span class="meta">latest evaluations</span></div>
+                <div class="w-card" id="risk-panel"></div>
+            </div>
+            <div>
+                <div class="w-sub"><span>Security Lab</span><span class="tag">Demo · simulated rail</span></div>
+                <div class="w-card">
+                    <p class="c-note">Runs on separate lab-* agents under the demo user, through the real pipeline: Ed25519 signatures, deterministic
+                        authority checks and the trained IsolationForest. “Behavioural anomaly” is a <b>Controlled Security Simulation</b> with labelled
+                        synthetic holds, not real customer history. The shopping-flow containment runs from the AI Agent review screen.</p>
+                    <div class="demo-controls">
+                        <button class="btn btn-sm" type="button" data-demo="initialize">1 · Initialize lab</button>
+                        <button class="btn btn-sm" type="button" data-demo="normal-payment">2 · Normal payment</button>
+                        <button class="btn btn-sm" type="button" data-demo="policy-violation">3 · Over-limit request</button>
+                        <button class="btn btn-sm" type="button" data-demo="concurrent-race">4 · Concurrent race</button>
+                        <button class="btn btn-sm" type="button" data-demo="behavioural-anomaly">5 · Behavioural anomaly (simulation)</button>
+                        <button class="btn btn-sm" type="button" data-demo="tamper-request">6 · Tampered request</button>
+                    </div>
+                    <div id="demo-result" class="demo-result" role="status" aria-live="polite" hidden></div>
+                    <div class="danger-zone">
+                        <span><span class="tag">Demo only</span> <b>Reset demo data</b> is the one action that deletes records: it removes demo-user data
+                            (including its audit events) and re-provisions a clean demo user, Main Agent and standing authority. Consumer “Hide from Activity” never deletes anything.</span>
+                        <button class="btn btn-sm btn-danger" type="button" data-demo="reset">Reset demo data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-section" id="crypto" aria-labelledby="h-crypto">
+        <div class="w-head">
+            <span class="w-num">07</span>
+            <h2 class="h2" id="h-crypto">Cryptographic identity and verification</h2>
+            <p class="w-desc">Each agent holds its own Ed25519 keypair; only public keys are stored. Signed requests are checked for signature,
+                ±300 s timestamp window, one-time nonce, payload hash and operation binding. Capability grants are re-verified on every refresh.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card"><div id="crypto-panel" class="kv"></div></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="audit" aria-labelledby="h-audit">
+        <div class="w-head">
+            <span class="w-num">08</span>
+            <h2 class="h2" id="h-audit">Audit trail and payment history</h2>
+            <p class="w-desc">Every authority change and payment is written to the audit log. Payments settle on a simulated rail with a simulated UTR.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-sub"><span>Payments</span><span class="tag">Simulated rail</span></div>
+            <div class="w-card table-wrap"><table class="table">
+                <thead><tr><th>Payment</th><th>Merchant</th><th class="r">Amount</th><th>UTR</th><th>Status</th><th class="r">Time</th></tr></thead>
+                <tbody id="payments-table"></tbody></table></div>
+            <div class="w-sub mt-6"><span>Audit events</span><span class="meta">polling · 2 s · hover an event for its full payload</span></div>
+            <div class="w-card"><div class="event-feed" id="event-feed"></div></div>
+        </div>
+    </section>
+</div>
+
+<div class="modal-overlay" id="cap-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+        <button class="modal-close link" id="modal-close" type="button" aria-label="Close">Close</button>
+        <div class="eyebrow" id="modal-title">Capability details</div>
+        <div id="modal-body" class="mt-4"></div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/app.js"></script>{% endblock %}

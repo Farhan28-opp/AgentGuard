@@ -1,0 +1,140 @@
+{% extends "_base.html" %}
+{% set active_page = "drunix" %}
+{% block title %}AgentGuard — Drunix Ledger{% endblock %}
+{% block description %}Drunix ledger: on-chain enforcement of every AI-agent payment authority, live transactions, reconciliation and the ledger-bypass Security Lab.{% endblock %}
+{% block content %}
+<div class="wrap work-page">
+    <header class="work-head">
+        <div>
+            <div class="eyebrow">AgentGuard × Drunix · integration view</div>
+            <h1 class="h1">Every agent payment, enforced on the Drunix ledger.</h1>
+            <p class="lede">AgentGuard decides whether a request is acceptable. The <span class="mono">agentauth</span> chaincode on Drunix
+                independently decides whether the authority exists. With enforcement on, a payment is recorded only after Drunix commits it VALID.</p>
+        </div>
+        <div class="work-status">
+            <span class="live-chip" id="dx-mode"><span class="dot-live off"></span>Checking Drunix…</span>
+            <span class="meta mono" id="dx-updated">—</span>
+        </div>
+    </header>
+
+    <div class="layers" aria-label="How AgentGuard and Drunix divide the work">
+        <div>
+            <div class="eyebrow">AgentGuard decides</div>
+            <p class="h4">Is this request acceptable?</p>
+            <p>Agent identity (Ed25519 signature, nonce, timestamp, payload hash), your policy, and behavioural risk from the IsolationForest.</p>
+        </div>
+        <div>
+            <div class="eyebrow" style="color:var(--accent-ink)">Drunix enforces</div>
+            <p class="h4">Does the authority actually exist?</p>
+            <p>Mandate → capability tree on-chain: limits, hierarchy, holder, merchant and category scope, time windows, expiry, idempotency and revocation.</p>
+        </div>
+    </div>
+
+    <nav class="subnav mt-6" aria-label="Drunix Ledger sections">
+        <a href="#status"><span>01</span>Integration status</a>
+        <a href="#chain"><span>02</span>Latest payments</a>
+        <a href="#transactions"><span>03</span>Transactions</a>
+        <a href="#lab"><span>04</span>Security Lab</a>
+        <a href="#reconciliation"><span>05</span>Reconciliation</a>
+        <a href="#sync"><span>06</span>Sync pending</a>
+    </nav>
+
+    <section class="w-section" id="status" aria-labelledby="h-status">
+        <div class="w-head">
+            <span class="w-num">01</span>
+            <h2 class="h2" id="h-status">Integration status</h2>
+            <div class="w-aside"><span class="meta" id="dx-status-note"></span></div>
+            <p class="w-desc">What the bridge actually observed. “Connected” is shown only when the bridge answered a real query against the deployed chaincode.</p>
+        </div>
+        <div class="w-body">
+            <div class="drunix-grid" id="dx-status"><div class="drunix-stat"><div class="k">Status</div><div class="v"><span class="loading"><span class="spinner"></span>Loading</span></div></div></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="chain" aria-labelledby="h-chain">
+        <div class="w-head">
+            <span class="w-num">02</span>
+            <h2 class="h2" id="h-chain">Latest payments, step by step</h2>
+            <div class="w-aside" id="dx-chain-links"></div>
+            <p class="w-desc">The most recent agent purchase, traced through every check between the request and the receipt, and the most recent
+                direct payment. Every value comes from the order or payment request and the Drunix transaction journal — nothing is assumed.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card" id="dx-chain"><span class="loading"><span class="spinner"></span>Loading the latest agent payment</span></div>
+            <div class="w-sub mt-6"><span>Latest direct payment · recharge, bill or send money, authorized by you</span><span class="meta" id="dx-direct-links"></span></div>
+            <div class="w-card" id="dx-direct"><span class="loading"><span class="spinner"></span>Loading the latest direct payment</span></div>
+            <div class="inside-drunix" aria-label="Inside Drunix, for every reserve and commit">
+                <b>Inside Drunix, for every reserve and commit:</b>
+                <span>Gateway · Lite Peers endorse</span><b>→</b><span>Orderer (Raft)</span><b>→</b>
+                <span>Committing Peers + validation service</span><b>→</b><span>SQL state DB</span><b>→</b><span>VALID</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-section" id="transactions" aria-labelledby="h-transactions">
+        <div class="w-head">
+            <span class="w-num">03</span>
+            <h2 class="h2" id="h-transactions">Latest Drunix transactions</h2>
+            <div class="w-aside"><label class="check meta"><input type="checkbox" id="tx-lab" checked> Include Security Lab</label></div>
+            <p class="w-desc">The journal of every transaction AgentGuard submitted. A request the chaincode refused at endorsement was never ordered into a block.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card table-wrap scroll-y"><table class="table">
+                <thead><tr><th>Time</th><th>Function</th><th>Entity</th><th>Outcome</th><th>Tx · block</th><th>Code / reason</th><th class="r">ms</th></tr></thead>
+                <tbody id="tx-body"><tr><td colspan="7" class="meta">Loading…</td></tr></tbody>
+            </table></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="lab" aria-labelledby="h-lab">
+        <div class="w-head">
+            <span class="w-num">04</span>
+            <h2 class="h2" id="h-lab">Security Lab — ledger bypass</h2>
+            <div class="w-aside"><span class="tag">Direct to Drunix · no AgentGuard checks</span></div>
+            <p class="w-desc">Each attack is sent straight to the <span class="mono">agentauth</span> chaincode through the bridge, with the same ledger identity
+                AgentGuard uses — as if AgentGuard's own backend were compromised. Signatures, policy, the risk engine and PostgreSQL are not involved.
+                The lab uses its own on-chain authority tree (₹10,000 lab mandate); your data is not touched. Each transaction takes about 2 s (Drunix block time).</p>
+        </div>
+        <div class="w-body">
+            <div class="row-gap mb-4">
+                <button class="btn btn-sm btn-primary" id="lab-run-all" type="button">Run all attacks</button>
+                <button class="btn btn-sm btn-secondary" id="lab-setup" type="button">Recreate lab authority on-chain</button>
+            </div>
+            <div class="lab-grid" id="lab-grid"></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="reconciliation" aria-labelledby="h-reconciliation">
+        <div class="w-head">
+            <span class="w-num">05</span>
+            <h2 class="h2" id="h-reconciliation">Reconciliation · PostgreSQL vs Drunix</h2>
+            <div class="w-aside"><button class="btn btn-sm btn-secondary" id="rc-refresh" type="button">Refresh</button></div>
+            <p class="w-desc">Recent capabilities and reservations — agent purchases and direct payments. Amounts in paise. <b>MATCH</b>: AgentGuard and the
+                on-chain state agree. <b>MISMATCH</b> is never hidden. <b>NOT_ON_LEDGER</b>: created while DRUNIX_MODE was off (or a labelled simulation hold).</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card table-wrap"><table class="table">
+                <thead><tr><th>Kind</th><th>Entity</th><th>State</th><th>PostgreSQL</th><th>Drunix</th></tr></thead>
+                <tbody id="rc-body"><tr><td colspan="5" class="meta">Loading…</td></tr></tbody>
+            </table></div>
+        </div>
+    </section>
+
+    <section class="w-section" id="sync" aria-labelledby="h-sync">
+        <div class="w-head">
+            <span class="w-num">06</span>
+            <h2 class="h2" id="h-sync">Sync pending</h2>
+            <div class="w-aside"><button class="btn btn-sm btn-secondary" id="sync-retry" type="button">Retry now</button></div>
+            <p class="w-desc">Release, return-unused and revoke always take effect in AgentGuard immediately. If Drunix cannot confirm them, they are listed
+                here as SYNC_PENDING and retried automatically — the ledger is never assumed to be in sync.</p>
+        </div>
+        <div class="w-body">
+            <div class="w-card table-wrap"><table class="table">
+                <thead><tr><th>Since</th><th>Function</th><th>Entity</th><th>Attempts</th><th>Last error</th></tr></thead>
+                <tbody id="sync-body"><tr><td colspan="5" class="meta">—</td></tr></tbody>
+            </table></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/drunix.js"></script>{% endblock %}
